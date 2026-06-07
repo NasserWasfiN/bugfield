@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BugField — Insurance Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ── Sidebar ─────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-mark">🐛</div>
+      <div>
+        <div class="logo-title">BugField</div>
+        <div class="logo-sub">Insurance Platform</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section-label">Project</div>
+      <a class="nav-item active" onclick="setNav(this,'board')">
+        <i class="fa-solid fa-table-columns"></i> Board
+      </a>
+      <a class="nav-item" onclick="setNav(this,'backlog')">
+        <i class="fa-solid fa-list"></i> Backlog
+      </a>
+      <a class="nav-item" onclick="setNav(this,'reports')">
+        <i class="fa-solid fa-chart-bar"></i> Reports
+      </a>
+      <div class="nav-section-label">Settings</div>
+      <a class="nav-item">
+        <i class="fa-solid fa-users"></i> Members
+      </a>
+      <a class="nav-item">
+        <i class="fa-solid fa-gear"></i> Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="avatar-circle" style="width:32px;height:32px;font-size:12px;background:#dcf5ec;color:#085041">NA</div>
+      <div>
+        <div class="user-name">Nasser</div>
+        <div class="user-role">Process Lead</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────────── -->
+  <div class="main">
+    <header class="topbar">
+      <h1 class="page-title" id="page-title">Bug Board</h1>
+      <div class="topbar-actions">
+        <span class="issue-count" id="issue-count"></span>
+        <button class="btn btn-primary" onclick="openCreate()">
+          <i class="fa-solid fa-plus"></i> Log Bug
+        </button>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="search" type="text" placeholder="Search bugs…" oninput="render()">
+      </div>
+      <select id="sev-filter" onchange="render()">
+        <option value="">All severities</option>
+        <option value="1">🐞 Ladybug</option>
+        <option value="2">🐜 Ant</option>
+        <option value="3">🦟 Mosquito</option>
+        <option value="4">🪲 Stink Bug</option>
+        <option value="5">🦌 Stag Beetle</option>
+        <option value="6">🐝 Wasp</option>
+      </select>
+      <select id="assignee-filter" onchange="render()">
+        <option value="">All assignees</option>
+        <option value="NA">Nasser</option>
+        <option value="FA">Farooq</option>
+        <option value="AE">Amir E</option>
+        <option value="AM">Amir M</option>
+        <option value="AN">Ann</option>
+        <option value="US">Usama</option>
+        <option value="AS">Ashley</option>
+        <option value="JE">Jessica</option>
+        <option value="HA">Haadi</option>
+        <option value="ANS">Anas</option>
+        <option value="KE">Kelsey</option>
+      </select>
+      <select id="product-filter" onchange="render()">
+        <option value="">All products</option>
+        <option value="Auto">Auto</option>
+        <option value="HAB">HAB</option>
+        <option value="Both">Both</option>
+      </select>
+      <div class="spacer"></div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="vb-board" onclick="setView('board')" title="Board">
+          <i class="fa-solid fa-table-columns"></i>
+        </button>
+        <button class="view-btn" id="vb-list" onclick="setView('list')" title="List">
+          <i class="fa-solid fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Content area -->
+    <div class="content">
+      <div class="kanban"      id="kanban-view"></div>
+      <div class="list-view"   id="list-view"   style="display:none"></div>
+      <div class="reports-view" id="reports-view" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ── Create Modal ───────────────────────────── -->
+  <div class="modal-overlay" id="create-modal" onclick="if(event.target===this)closeCreate()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Log a new bug</h2>
+        <button class="icon-btn" onclick="closeCreate()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="field">
+        <label>Title <span class="req">*</span></label>
+        <input id="f-title" type="text" placeholder="Brief description of the issue">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Severity</label>
+          <select id="f-sev">
+            <option value="1">🐞 1 — Ladybug (Cosmetic)</option>
+            <option value="2">🐜 2 — Ant (Small Friction)</option>
+            <option value="3">🦟 3 — Mosquito (Annoying Repeater)</option>
+            <option value="4">🪲 4 — Stink Bug (Confusing Experience)</option>
+            <option value="5">🦌 5 — Stag Beetle (Journey Interruption)</option>
+            <option value="6">🐝 6 — Wasp (Critical Blocker)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="f-status">
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="configreview">Config Review</option>
+            <option value="readyqa">Ready for QA</option>
+            <option value="inqa">In QA</option>
+            <option value="failedqa">Failed QA</option>
+            <option value="blocked">Blocked</option>
+            <option value="poreview">PO Review</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Product line</label>
+          <select id="f-product">
+            <option value="Auto">Auto</option>
+            <option value="HAB">HAB</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Assignee</label>
+          <select id="f-assignee">
+            <option value="NA">Nasser</option>
+            <option value="FA">Farooq</option>
+            <option value="AE">Amir E</option>
+            <option value="AM">Amir M</option>
+            <option value="AN">Ann</option>
+            <option value="US">Usama</option>
+            <option value="AS">Ashley</option>
+            <option value="JE">Jessica</option>
+            <option value="HA">Haadi</option>
+            <option value="ANS">Anas</option>
+            <option value="KE">Kelsey</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea id="f-desc" placeholder="Steps to reproduce, affected journey stage, system (Salesforce / Guidewire / Unqork)…"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeCreate()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveIssue()">
+          <i class="fa-solid fa-plus"></i> Create Bug
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Detail Modal ───────────────────────────── -->
+  <div class="modal-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+    <div class="modal modal-wide" id="detail-panel"></div>
+  </div>
+
+  <!-- ── Toast ──────────────────────────────────── -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="/js/data.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>
