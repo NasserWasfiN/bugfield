@@ -3,7 +3,5 @@ services:
     name: bugfield
     runtime: node
     buildCommand: npm install
-    startCommand: npm start
-    envVars:
-      - key: PORT
-        value: 3000
+    startCommand: node server/index.js
+    plan: free
